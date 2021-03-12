@@ -1,6 +1,5 @@
-const FLAG_NAMESPACE = 'rc-spent-ammo';
-
-function main() {
+const AmmoTracker = (function () {
+  const FLAG_NAMESPACE = 'rc-spent-ammo';
   const ammoTracker = new GameAmmoTracker();
 
   Hooks.on('createCombat', () => ammoTracker.startCombat());
@@ -8,90 +7,90 @@ function main() {
     ammoTracker.endCombat();
     ammoTracker.notifyAllSpentAmmo();
   });
-}
 
-class GameAmmoTracker {
-  constructor(optActors) {
-    if (!optActors) {
-      optActors = game.users.players
-        .map(({data: {character}}) => game.actors.get(character));
-    }
-    this.trackers = optActors.map(actor => new ActorAmmoTracker(actor));
-  }
-
-  /** Records ammo at the start of a combat. */
-  startCombat() {
-    this.trackers.forEach(t => t.startCombat());
-  }
-
-  /** Records ammo quantities at the end of a combat. */
-  endCombat() {
-    this.trackers.forEach(t => t.endCombat());
-  }
-}
-
-class ActorAmmoTracker {
-  constructor(actor) {
-    this.actor = actor;
-    this._ammoRecords = null;
-  }
-
-  /**
-   * Produces a list of all of the actor's ammo items.
-   * @return {Array<Item>}
-   */
-  get ammoItems() {
-    return this.actor.items.filter(
-      item => item.data.data.consumableType == 'ammo'
-    );
-  }
-
-  /** Records ammo at the start of a combat. */
-  startCombat() {
-    this._ammoRecords = {};
-    this.ammoItems.forEach(item => {
-      item.setFlag(FLAG_NAMESPACE, 'startQuantity', item.data.quantity);
-      this._ammoRecords[item._id] = item;
-    });
-  }
-
-  /** Records ammo quantities at the end of a combat. */
-  endCombat() {
-    this.ammoItems.forEach(item => {
-      if (item._id in this._ammoRecords) {
-        item.setFlag(FLAG_NAMESPACE, 'endQuantity', item.data.quantity);
+  class GameAmmoTracker {
+    constructor(optActors) {
+      if (!optActors) {
+        optActors = game.users.players
+          .map(({data: {character}}) => game.actors.get(character));
       }
-    });
+      this.trackers = optActors.map(actor => new ActorAmmoTracker(actor));
+    }
 
-    this.spentAmmo.map(ammo => this._notifySpentAmmo(ammo));
+    /** Records ammo at the start of a combat. */
+    startCombat() {
+      this.trackers.forEach(t => t.startCombat());
+    }
+
+    /** Records ammo quantities at the end of a combat. */
+    endCombat() {
+      this.trackers.forEach(t => t.endCombat());
+    }
   }
 
-  /**
-   * Lists ammo items that were consumed during combat.
-   * @return {Array<Item>}
-   */
-  get spentAmmo() {
-    return Object.values(this._ammoRecords)
-      .map(item => {
-        const startQuantity = item.getFlag(FLAG_NAMESPACE, 'startQuantity');
-        const endQuantity = item.getFlag(FLAG_NAMESPACE, 'endQuantity') || 0;
-        const spent = startQuantity - endQuantity;
-        const recoverable = Math.floor(spent / 2);
-        return {item, startQuantity, endQuantity, spent, recoverable};
-      })
-      .filter(({spent}) => spent > 0);
+  class ActorAmmoTracker {
+    constructor(actor) {
+      this.actor = actor;
+      this._ammoRecords = null;
+    }
+
+    /**
+     * Produces a list of all of the actor's ammo items.
+     * @return {Array<Item>}
+     */
+    get ammoItems() {
+      return this.actor.items.filter(
+        item => item.data.data.consumableType == 'ammo'
+      );
+    }
+
+    /** Records ammo at the start of a combat. */
+    startCombat() {
+      this._ammoRecords = {};
+      this.ammoItems.forEach(item => {
+        item.setFlag(FLAG_NAMESPACE, 'startQuantity', item.data.quantity);
+        this._ammoRecords[item._id] = item;
+      });
+    }
+
+    /** Records ammo quantities at the end of a combat. */
+    endCombat() {
+      this.ammoItems.forEach(item => {
+        if (item._id in this._ammoRecords) {
+          item.setFlag(FLAG_NAMESPACE, 'endQuantity', item.data.quantity);
+        }
+      });
+
+      this.spentAmmo.map(ammo => this._notifySpentAmmo(ammo));
+    }
+
+    /**
+     * Lists ammo items that were consumed during combat.
+     * @return {Array<Item>}
+     */
+    get spentAmmo() {
+      return Object.values(this._ammoRecords)
+        .map(item => {
+          const startQuantity = item.getFlag(FLAG_NAMESPACE, 'startQuantity');
+          const endQuantity = item.getFlag(FLAG_NAMESPACE, 'endQuantity') || 0;
+          const spent = startQuantity - endQuantity;
+          const recoverable = Math.floor(spent / 2);
+          return {item, startQuantity, endQuantity, spent, recoverable};
+        })
+        .filter(({spent}) => spent > 0);
+    }
+
+    /** Sends a whisper message about spent and recoverable ammo. */
+    _notifySpentAmmo({startQuantity, endQuantity, spent, recoverable, item}) {
+      ChatMessage.create({
+        content: `${item.name}: ${startQuantity} -> ${endQuantity}\n` +
+          `<b>Spent:</b> ${spent}\n<b>Recoverable:</b> ${recoverable}`,
+        speaker: ChatMessage.getSpeaker({alias: "Ammo Tracker"}),
+        type: CHAT_MESSAGE_TYPES.WHISPER, // https://foundryvtt.com/api/foundry.js.html#line83
+        whisper: ChatMessage.getWhisperRecipients(this.actor.name)
+      });
+    }
   }
 
-  /** Sends a whisper message about spent and recoverable ammo. */
-  _notifySpentAmmo({startQuantity, endQuantity, spent, recoverable, item}) {
-    ChatMessage.create({
-      content: `${item.name}: ${startQuantity} -> ${endQuantity}\n` +
-        `<b>Spent:</b> ${spent}\n<b>Recoverable:</b> ${recoverable}`,
-      speaker: ChatMessage.getSpeaker({alias: "Ammo Tracker"}),
-      type: CHAT_MESSAGE_TYPES.WHISPER, // https://foundryvtt.com/api/foundry.js.html#line83
-      whisper: ChatMessage.getWhisperRecipients(this.actor.name)
-    });
-  }
-}
-
-main();
+  return ammoTracker;
+})();
