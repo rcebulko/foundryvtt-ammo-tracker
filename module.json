@@ -10,9 +10,7 @@
     "system": "dnd5e",
     "license": "LICENSE.md",
     "readme": "README.md",
+    "download": "https://github.com/rcebulko/foundryvtt-ammo-tracker/archive/main.zip",
 
-    "esmodules": [
-        "scripts/index.js"
-        "scripts/ammo-tracker.js"
-    ],
+    "scripts": ["ammo-tracker.js"]
 }

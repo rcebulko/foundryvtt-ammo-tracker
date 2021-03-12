@@ -1,3 +1,33 @@
+function main() {
+  const ammoTracker = new GameAmmoTracker();
+
+  Hooks.on('createCombat', () => ammoTracker.startCombat());
+  Hooks.on('deleteCombat', () => {
+    ammoTracker.endCombat();
+    ammoTracker.notifyAllSpentAmmo();
+  });
+}
+
+class GameAmmoTracker {
+  constructor(optActors) {
+    if (!optActors) {
+      optActors = game.users.players
+        .map(({data: {character}}) => game.actors.get(character));
+    }
+    this.trackers = optActors.map(actor => new ActorAmmoTracker(actor));
+  }
+
+  /** Records ammo at the start of a combat. */
+  startCombat() {
+    this.trackers.forEach(t => t.startCombat());
+  }
+
+  /** Records ammo quantities at the end of a combat. */
+  endCombat() {
+    this.trackers.forEach(t => t.endCombat());
+  }
+}
+
 class ActorAmmoTracker {
   constructor(actor) {
     this.actor = actor;
@@ -64,22 +94,4 @@ class ActorAmmoTracker {
   }
 }
 
-class GameAmmoTracker {
-  constructor(optActors) {
-    if (!optActors) {
-      optActors = game.users.players
-        .map(({data: {character}}) => game.actors.get(character));
-    }
-    this.trackers = optActors.map(actor => new ActorAmmoTracker(actor));
-  }
-
-  /** Records ammo at the start of a combat. */
-  startCombat() {
-    this.trackers.forEach(t => t.startCombat());
-  }
-
-  /** Records ammo quantities at the end of a combat. */
-  endCombat() {
-    this.trackers.forEach(t => t.endCombat());
-  }
-}
+main();
