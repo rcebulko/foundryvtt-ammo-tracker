@@ -114,12 +114,14 @@ const AmmoTracker = (function () {
           `<b>Recoverable:</b> ${recoverable}`,
         ].join('\n'));
 
-      ChatMessage.create({
-        content: [...chatParts, `@Macro[${RECOVER_AMMO_MACRO}]`].join('<hr>'),
-        speaker: ChatMessage.getSpeaker({alias: "Ammo Tracker"}),
-        type: CHAT_MESSAGE_TYPES.WHISPER, // https://foundryvtt.com/api/foundry.js.html#line83
-        whisper: ChatMessage.getWhisperRecipients(this.actor.name)
-      });
+      if (chatParts.length) {
+        ChatMessage.create({
+          content: [...chatParts, `@Macro[${RECOVER_AMMO_MACRO}]`].join('<hr>'),
+          speaker: ChatMessage.getSpeaker({alias: "Ammo Tracker"}),
+          type: CHAT_MESSAGE_TYPES.WHISPER, // https://foundryvtt.com/api/foundry.js.html#line83
+          whisper: ChatMessage.getWhisperRecipients(this.actor.name)
+        });
+      }
     }
   }
 
