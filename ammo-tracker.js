@@ -87,8 +87,20 @@ const AmmoTracker = (function () {
     }
   }
 
-  return new GameAmmoTracker();
+  return GameAmmoTracker;
 })();
 
-Hooks.on('createCombat', () => AmmoTracker.startCombat());
-Hooks.on('deleteCombat', () => AmmoTracker.endCombat());
+// Lazy initialize in hooks since some utils (ui, game) may not be available
+// when script is run.
+Hooks.on('createCombat', () => {
+  if (!AmmoTracker.instance) {
+    AmmoTracker.instance = new AmmoTracker();
+  }
+  AmmoTracker.instance.startCombat();
+});
+Hooks.on('deleteCombat', () => {
+  if (!AmmoTracker.instance) {
+    AmmoTracker.instance = new AmmoTracker();
+  }
+  AmmoTracker.instance.endCombat()
+});
