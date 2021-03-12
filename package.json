@@ -1,0 +1,11 @@
+{
+  "name": "foundry-vtt-spent-ammo-tracker",
+  "version": "1.0.0",
+  "description": "Small module to track spent and recoverable ammo during combat (5e)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ryan@cebulko.com",
+  "license": "ISC"
+}
