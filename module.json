@@ -1,5 +1,5 @@
 {
-    "name": "atpp-spent-ammo-tracker",
+    "name": "RC Spent Ammo Tracker",
     "title": "RC Spent/Recoverable Ammo Tracker",
     "description": "Small module to track spent and recoverable ammo during combat (5e)",
     "author": "rcebulko",
@@ -10,6 +10,7 @@
     "system": "dnd5e",
     "license": "LICENSE.md",
     "readme": "README.md",
+    "manifest": "https://raw.githubusercontent.com/rcebulko/foundryvtt-ammo-tracker/main/module.json",
     "download": "https://github.com/rcebulko/foundryvtt-ammo-tracker/archive/main.zip",
 
     "scripts": ["ammo-tracker.js"]
