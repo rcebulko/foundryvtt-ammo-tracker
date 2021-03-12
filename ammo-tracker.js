@@ -43,7 +43,7 @@ const AmmoTracker = (function () {
     startCombat() {
       this._ammoRecords = {};
       this.ammoItems.forEach(item => {
-        item.setFlag(FLAG_NAMESPACE, 'startQuantity', item.data.quantity);
+        item.setFlag(FLAG_NAMESPACE, 'startQuantity', item.data.data.quantity);
         this._ammoRecords[item._id] = item;
       });
     }
@@ -52,7 +52,7 @@ const AmmoTracker = (function () {
     endCombat() {
       this.ammoItems.forEach(item => {
         if (item._id in this._ammoRecords) {
-          item.setFlag(FLAG_NAMESPACE, 'endQuantity', item.data.quantity);
+          item.setFlag(FLAG_NAMESPACE, 'endQuantity', item.data.data.quantity);
         }
       });
 
