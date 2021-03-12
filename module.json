@@ -11,5 +11,8 @@
     "license": "LICENSE.md",
     "readme": "README.md",
 
-    "esmodules": ["scripts/ammo-tracker.js"]
+    "esmodules": [
+        "scripts/index.js"
+        "scripts/ammo-tracker.js"
+    ],
 }
