@@ -112,7 +112,7 @@ const AmmoTracker = (function () {
           `${item.name}: ${startQuantity} -> ${endQuantity}`,
           `<b>Spent:</b> ${spent}`,
           `<b>Recoverable:</b> ${recoverable}`,
-        ].join('\n');
+        ].join('\n'));
 
       ChatMessage.create({
         content: [...chatParts, `@Macro[${RECOVER_AMMO_MACRO}]`].join('<hr>'),
