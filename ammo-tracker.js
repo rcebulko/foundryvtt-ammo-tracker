@@ -103,12 +103,13 @@ const AmmoTracker = (function () {
       for (const ammo of this.spentAmmo) {
         const {item, recoverable} = ammo;
         if (recoverable > 0) {
+          const newQuantity = item.data.data.quantity + recoverable;
           await item.update({
-            data: {quantity: item.data.data.quantity + recoverable}
+            data: {quantity: newQuantity}
           });
 
-          // Mark this off so you can't accidentally double-click
-          ammo.recoverable = 0;
+          // This prevents accidental double-clicks
+          await item.setFlag(FLAG_NAMESPACE, 'startQuantity', newQuantity);
           recoveredLines.push(`${recoverable}x ${item.name} recovered`);
         }
       };
