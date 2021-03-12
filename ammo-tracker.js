@@ -1,12 +1,5 @@
 const AmmoTracker = (function () {
   const FLAG_NAMESPACE = 'rc-spent-ammo';
-  const ammoTracker = new GameAmmoTracker();
-
-  Hooks.on('createCombat', () => ammoTracker.startCombat());
-  Hooks.on('deleteCombat', () => {
-    ammoTracker.endCombat();
-    ammoTracker.notifyAllSpentAmmo();
-  });
 
   class GameAmmoTracker {
     constructor(optActors) {
@@ -19,11 +12,13 @@ const AmmoTracker = (function () {
 
     /** Records ammo at the start of a combat. */
     startCombat() {
+      console.log('Ammo Tracker starting combat');
       this.trackers.forEach(t => t.startCombat());
     }
 
     /** Records ammo quantities at the end of a combat. */
     endCombat() {
+      console.log('Ammo Tracker ending combat');
       this.trackers.forEach(t => t.endCombat());
     }
   }
@@ -92,5 +87,8 @@ const AmmoTracker = (function () {
     }
   }
 
-  return ammoTracker;
+  return new GameAmmoTracker();
 })();
+
+Hooks.on('createCombat', () => AmmoTracker.startCombat());
+Hooks.on('deleteCombat', () => AmmoTracker.endCombat());
