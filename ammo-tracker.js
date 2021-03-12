@@ -1,4 +1,5 @@
 const AmmoTracker = (function () {
+  const RECOVER_AMMO_MACRO = 'Recover Ammo';
   const FLAG_NAMESPACE = 'rc-spent-ammo';
 
   class GameAmmoTracker {
@@ -56,7 +57,7 @@ const AmmoTracker = (function () {
         }
       });
 
-      this.spentAmmo.map(ammo => this._notifySpentAmmo(ammo));
+      this._notifySpentAmmo();
     }
 
     /**
@@ -105,16 +106,16 @@ const AmmoTracker = (function () {
     }
 
     /** Sends a whisper message about spent and recoverable ammo. */
-    _notifySpentAmmo({startQuantity, endQuantity, spent, recoverable, item}) {
-      const msgLines = [
-        `${item.name}: ${startQuantity} -> ${endQuantity}`,
-        `<b>Spent:</b> ${spent}`,
-        `<b>Recoverable:</b> ${recoverable}`,
-        `@Macro[Recover Ammo]`
-      ];
+    _notifySpentAmmo() {
+      const chatParts = this.spentAmmo.map(
+        ({startQuantity, endQuantity, spent, recoverable, item}) => [
+          `${item.name}: ${startQuantity} -> ${endQuantity}`,
+          `<b>Spent:</b> ${spent}`,
+          `<b>Recoverable:</b> ${recoverable}`,
+        ].join('\n');
 
       ChatMessage.create({
-        content: msgLines.join('\n'),
+        content: [...chatParts, `@Macro[${RECOVER_AMMO_MACRO}]`].join('<hr>'),
         speaker: ChatMessage.getSpeaker({alias: "Ammo Tracker"}),
         type: CHAT_MESSAGE_TYPES.WHISPER, // https://foundryvtt.com/api/foundry.js.html#line83
         whisper: ChatMessage.getWhisperRecipients(this.actor.name)
