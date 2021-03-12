@@ -110,6 +110,7 @@ const AmmoTracker = (function () {
 
           // This prevents accidental double-clicks
           await item.setFlag(FLAG_NAMESPACE, 'startQuantity', newQuantity);
+          await item.setFlag(FLAG_NAMESPACE, 'endQuantity', newQuantity);
           recoveredLines.push(`${recoverable}x ${item.name} recovered`);
         }
       };
@@ -122,6 +123,13 @@ const AmmoTracker = (function () {
             ...recoveredLines,
           ].join('\n'),
           speaker: ChatMessage.getSpeaker({actor: this.actor}),
+        });
+      } else {
+        await ChatMessage.create({
+          content: 'You already recovered this ammo!',
+          speaker: ChatMessage.getSpeaker({alias: "Ammo Tracker"}),
+          type: CHAT_MESSAGE_TYPES.WHISPER, // https://foundryvtt.com/api/foundry.js.html#line83
+          whisper: ChatMessage.getWhisperRecipients(this.actor.name)
         });
       }
     }
