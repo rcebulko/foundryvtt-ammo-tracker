@@ -3,7 +3,7 @@
     "title": "RC Spent/Recoverable Ammo Tracker",
     "description": "Small module to track spent and recoverable ammo during combat (5e)",
     "author": "rcebulko",
-    "version": "1.0.6",
+    "version": "1.0.7",
 
     "minimumCoreVersion": "0.7.9",
     "compatibleCoreVersion": "0.7.9",
