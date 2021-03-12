@@ -75,11 +75,46 @@ const AmmoTracker = (function () {
         .filter(({spent}) => spent > 0);
     }
 
+    /** Recover half of spent ammo (rounded down). */
+    recoverAmmo() {
+      const recoveredLines = [];
+      this.spentAmmo
+        .forEach(ammo => {
+          const {item, recoverable} = ammo;
+          if (recoverable > 0) {
+            item.update({
+              data: {
+                quantity: item.data.data.quantity + recoverable
+              }
+            });
+            // Mark this off so you can't accidentally double-click
+            ammo.recoverable = 0;
+            recoveredLines.push(`${recoverable}x ${item.name} recovered`);
+          }
+        });
+
+      if (recoveredLines.length) {
+        ChatMessage.create({
+          content: [
+            `${this.actor.name} spends a minute recovering ammo`,
+            ...recoveredLines,
+          ].join('\n'),
+          speaker: ChatMessage.getSpeaker({actor: this.actor}),
+        });
+      }
+    }
+
     /** Sends a whisper message about spent and recoverable ammo. */
     _notifySpentAmmo({startQuantity, endQuantity, spent, recoverable, item}) {
+      const msgLines = [
+        `${item.name}: ${startQuantity} -> ${endQuantity}`,
+        `<b>Spent:</b> ${spent}`,
+        `<b>Recoverable:</b> ${recoverable}`,
+        `@Macro[Recover Ammo]`
+      ];
+
       ChatMessage.create({
-        content: `${item.name}: ${startQuantity} -> ${endQuantity}\n` +
-          `<b>Spent:</b> ${spent}\n<b>Recoverable:</b> ${recoverable}`,
+        content: msgLines.join('\n'),
         speaker: ChatMessage.getSpeaker({alias: "Ammo Tracker"}),
         type: CHAT_MESSAGE_TYPES.WHISPER, // https://foundryvtt.com/api/foundry.js.html#line83
         whisper: ChatMessage.getWhisperRecipients(this.actor.name)
