@@ -1,3 +1,5 @@
+const FLAG_NAMESPACE = 'rc-spent-ammo';
+
 function main() {
   const ammoTracker = new GameAmmoTracker();
 
@@ -39,29 +41,25 @@ class ActorAmmoTracker {
    * @return {Array<Item>}
    */
   get ammoItems() {
-    return this.actor.data.items.filter(
-      ({data}) => data.consumableType == 'ammo'
+    return this.actor.items.filter(
+      item => item.data.data.consumableType == 'ammo'
     );
   }
 
   /** Records ammo at the start of a combat. */
   startCombat() {
     this._ammoRecords = {};
-    this.ammoItems.forEach((item) => {
-      const {_id, data} = item;
-      this._ammoRecords[_id] = {
-        item,
-        startQuantity: data.quantity,
-        endQuantity: 0,
-      };
+    this.ammoItems.forEach(item => {
+      item.setFlag(FLAG_NAMESPACE, 'startQuantity', item.data.quantity);
+      this._ammoRecords[item._id] = item;
     });
   }
 
   /** Records ammo quantities at the end of a combat. */
   endCombat() {
-    this.ammoItems.forEach(({_id, data}) => {
-      if (_id in this._ammoRecords) {
-        this._ammoRecords[_id].endQuantity = data.quantity;
+    this.ammoItems.forEach(item => {
+      if (item._id in this._ammoRecords) {
+        item.setFlag(FLAG_NAMESPACE, 'endQuantity', item.data.quantity);
       }
     });
 
@@ -74,12 +72,14 @@ class ActorAmmoTracker {
    */
   get spentAmmo() {
     return Object.values(this._ammoRecords)
-      .filter(({startQuantity, endQuantity}) => startQuantity - endQuantity > 0)
-      .map(ammo => {
-        const spent = ammo.startQuantity - ammo.endQuantity;
+      .map(item => {
+        const startQuantity = item.getFlag(FLAG_NAMESPACE, 'startQuantity');
+        const endQuantity = item.getFlag(FLAG_NAMESPACE, 'endQuantity') || 0;
+        const spent = startQuantity - endQuantity;
         const recoverable = Math.floor(spent / 2);
-        return {...ammo, spent, recoverable};
-      });
+        return {item, startQuantity, endQuantity, spent, recoverable};
+      })
+      .filter(({spent}) => spent > 0);
   }
 
   /** Sends a whisper message about spent and recoverable ammo. */

@@ -1,5 +1,5 @@
 {
-    "name": "RC Spent Ammo Tracker",
+    "name": "rc-spent-ammo",
     "title": "RC Spent/Recoverable Ammo Tracker",
     "description": "Small module to track spent and recoverable ammo during combat (5e)",
     "author": "rcebulko",
