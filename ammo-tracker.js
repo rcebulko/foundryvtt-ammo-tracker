@@ -151,11 +151,11 @@ class ActorAmmoTracker {
       ].join('\n'));
     const recoverBtn = `<button data-actor-id='${
       this.actor._id
-    }' class='rc-ammo-tracker-recover' >Recover Ammo</button>`
+    }' class='rc-ammo-tracker-recover'>Recover Ammo</button>`;
 
     if (chatParts.length) {
       await ChatMessage.create({
-        content: [...chatParts, `@Macro[${RECOVER_AMMO_MACRO}]`].join('<hr>'),
+        content: [...chatParts, recoverBtn].join('<hr>'),
         speaker: ChatMessage.getSpeaker({alias: "Ammo Tracker"}),
         type: CHAT_MESSAGE_TYPES.WHISPER, // https://foundryvtt.com/api/foundry.js.html#line83
         whisper: ChatMessage.getWhisperRecipients(this.actor.name)
