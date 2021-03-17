@@ -6,7 +6,7 @@ How it works:
 - When you *Create Encounter*, it records the current quantity of any item with `consumableType == 'ammo'` (ie. arrows, crossbow bolts, etc.)
 - When you hit *End Combat*, it counts how much of each ammo type was spent
 - For spent ammo, it whispers to the actor how much was spent and how much can be recovered
-- The message includes a button, which both updates inventory and posts a public message indicating the recovered ammo
+- The message includes a **Recover Ammo** button, which both updates inventory and posts a public message indicating the recovered ammo
 - Tracking works fine across sessions/different devices, as all intermediate data is stored in flacts on the actors
 
 Assumptions/Known limitations:
@@ -17,5 +17,8 @@ Assumptions/Known limitations:
   - This is a rare enough edge case that I couldn't be bothered to deal with it
 - Behavior is undefined if you create and end multiple combats at a time; I never do this.
   - I suppose I could listen on `beginCombat` (or maybe it's `startCombat`?) instead of `createCombat`. If you care, make a PR :)
+
+Screenshot of sent message, after clicking **Recover Ammo** button:
+![image](https://user-images.githubusercontent.com/6694512/111404107-99525380-86a4-11eb-8165-693667abda0d.png)
 
 Module URL for installation: `https://raw.githubusercontent.com/rcebulko/foundryvtt-ammo-tracker/main/module.json`
