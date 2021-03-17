@@ -2,14 +2,14 @@
 
 Made for the DnD5e system. In 5e, after a combat, you can choose to spent 1 minute to recover half of expended ammo, rounding down. My players hated tracking their spent ammo each combat and trying to remember to recover it, so I made this module.
 
-How it works:
+## How it works:
 - When you *Create Encounter*, it records the current quantity of any item with `consumableType == 'ammo'` (ie. arrows, crossbow bolts, etc.)
 - When you hit *End Combat*, it counts how much of each ammo type was spent
 - For spent ammo, it whispers to the actor how much was spent and how much can be recovered
 - The message includes a **Recover Ammo** button, which both updates inventory and posts a public message indicating the recovered ammo
 - Tracking works fine across sessions/different devices, as all intermediate data is stored in flacts on the actors
 
-Assumptions/Known limitations:
+## Assumptions/Known limitations:
 - Currently, this works by finding all actors linked with game users. If a player owns multiple actors, this may misbehave
   - The `GameAmmoTracker` class accepts an optional list of actors in the constructor. If you want to contribute controls/settings to improve this, be my guest.
 - Behavior is undefined when ammo is fully depleted
