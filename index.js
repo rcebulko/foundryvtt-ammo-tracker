@@ -1,4 +1,4 @@
-import {GameAmmoTracker} from './ammo-tracker';
+import {GameAmmoTracker} from './ammo-tracker.js';
 
 let AmmoTracker;
 Hooks.on('ready', () => {
