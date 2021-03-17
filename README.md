@@ -1,6 +1,6 @@
 # RC Spent/Recoverable Ammo Tracker
 
-Made for the DnD5e system. In 5e, after a combat, you can choose to spent 1 minute to recover half of expended ammo, rounding down. My players hated tracking their spent ammo each combat and trying to remember to recover it, so I made this module.
+Made for the DnD5e system. In 5e, after a combat, you can choose to spend 1 minute to recover half of expended ammo, rounding down. My players hated tracking their spent ammo each combat and trying to remember to recover it, so I made this module.
 
 ## How it works:
 - When you *Create Encounter*, it records the current quantity of any item with `consumableType == 'ammo'` (ie. arrows, crossbow bolts, etc.)
