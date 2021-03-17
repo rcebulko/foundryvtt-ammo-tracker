@@ -19,6 +19,7 @@ Assumptions/Known limitations:
   - I suppose I could listen on `beginCombat` (or maybe it's `startCombat`?) instead of `createCombat`. If you care, make a PR :)
 
 Screenshot of sent message, after clicking **Recover Ammo** button:
+
 ![image](https://user-images.githubusercontent.com/6694512/111404107-99525380-86a4-11eb-8165-693667abda0d.png)
 
 Module URL for installation: `https://raw.githubusercontent.com/rcebulko/foundryvtt-ammo-tracker/main/module.json`
